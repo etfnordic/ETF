@@ -1,6 +1,6 @@
 // === 1. KONFIGURATION ===
-const SUPABASE_URL = "https://unepbuislxsuwggcwlck.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVuZXBidWlzbHhzd3VnZ2N3bGNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwNTIzNzgsImV4cCI6MjA4MDYyODM3OH0.XCL-81A8KTDncRdmszftNefluPbHR7kkgvJnRUoOPUk";
+const SUPABASE_URL = "https://ereoftabfbmwaahcubyb.supabase.co";
+const SUPABASE_ANON_KEY = "sb_secret_uEcK8o2rf1G8MkswRpO2_Q_g_hmuB-r";
 
 const { createClient } = supabase;
 const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
