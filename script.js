@@ -1,6 +1,6 @@
 // === 1. KONFIGURATION ===
-const SUPABASE_URL = "DIN_SUPABASE_URL_HÄR"; 
-const SUPABASE_ANON_KEY = "DIN_ANON_KEY_HÄR";
+const SUPABASE_URL = "https://unepbuislxswuggcwlck.supabase.co"; 
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVuZXBidWlzbHhzd3VnZ2N3bGNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwNTIzNzgsImV4cCI6MjA4MDYyODM3OH0.XCL-81A8KTDncRdmszftNefluPbHR7kkgvJnRUoOPUk";
 
 const { createClient } = supabase;
 const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -23,7 +23,7 @@ async function hamtaEtfer() {
   statusMessage.textContent = "Hämtar data...";
   try {
     const { data, error } = await client
-      .from("etfer")
+      .from("DATA")
       .select("*")
       .order("namn", { ascending: true });
 
