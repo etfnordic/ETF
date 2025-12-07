@@ -174,6 +174,16 @@ regionFilter.addEventListener("change", appliceraFilterOchRender);
 temaFilter.addEventListener("change", appliceraFilterOchRender);
 tillgangFilter.addEventListener("change", appliceraFilterOchRender);
 
+// Rensa filter-knapp
+document.getElementById("resetFiltersBtn").addEventListener("click", () => {
+  searchInput.value = "";
+  regionFilter.value = "";
+  temaFilter.value = "";
+  tillgangFilter.value = "";
+
+  appliceraFilterOchRender();
+});
+
 function initSorting() {
   const headerCells = document.querySelectorAll("thead th[data-sort-key]");
 
