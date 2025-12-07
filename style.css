@@ -224,3 +224,11 @@ tbody tr:hover {
   font-size: 0.8rem;
   color: var(--text-muted);
 }
+tr.clickable-row {
+  cursor: pointer;
+}
+
+tr.clickable-row:hover {
+  background: rgba(59, 130, 246, 0.35);
+}
+
