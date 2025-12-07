@@ -25,166 +25,118 @@
       </div>
     </header>
 
-    <main class="site-main">
-      <section class="table-section">
-        <div class="container">
-          <!-- Översta kortet med nyckelinfo -->
-          <div class="card">
-            <div class="card-header-row">
-              <div>
-                <h2 id="etfName" style="margin: 0 0 4px 0;">-</h2>
-                <p
-                  id="etfTicker"
-                  style="margin: 0; font-size: 0.9rem; color: var(--text-muted);"
-                >
-                  Ticker: -
-                </p>
-                <p
-                  id="etfIssuer"
-                  style="margin: 4px 0 0 0; font-size: 0.8rem; color: var(--text-muted);"
-                >
-                  Emitent: -
-                </p>
-              </div>
-            </div>
-
-            <!-- Nyckeltal -->
-            <div
-              style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; margin-top: 16px;"
-            >
-              <div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">
-                  Senaste kurs
-                </div>
-                <div
-                  id="etfLastPrice"
-                  style="font-size: 1.1rem; font-variant-numeric: tabular-nums;"
-                >
-                  -
-                </div>
-              </div>
-
-              <div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">
-                  1 år
-                </div>
-                <div
-                  id="etf1yReturn"
-                  style="font-size: 1.1rem; font-variant-numeric: tabular-nums;"
-                >
-                  -
-                </div>
-              </div>
-
-              <div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">
-                  1 år (SEK)
-                </div>
-                <div
-                  id="etf1yReturnSek"
-                  style="font-size: 1.1rem; font-variant-numeric: tabular-nums;"
-                >
-                  -
-                </div>
-              </div>
-
-              <div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">
-                  TER
-                </div>
-                <div
-                  id="etfTer"
-                  style="font-size: 1.1rem; font-variant-numeric: tabular-nums;"
-                >
-                  -
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Grundinfo-grid -->
-          <div
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; font-size: 0.85rem; color: var(--text-muted); margin-top: 16px;"
-          >
-            <div>
-              <strong>Region:</strong> <span id="etfRegion">-</span>
-            </div>
-            <div>
-              <strong>Tema:</strong> <span id="etfTema">-</span>
-            </div>
-            <div>
-              <strong>Tillgångsslag:</strong> <span id="etfTillgang">-</span>
-            </div>
-            <div>
-              <strong>Valuta:</strong> <span id="etfValuta">-</span>
-            </div>
-            <div>
-              <strong>Hemvist:</strong> <span id="etfHemvist">-</span>
-            </div>
-            <div>
-              <strong>Replikering:</strong> <span id="etfReplikering">-</span>
-            </div>
-            <div>
-              <strong>Utdelning:</strong> <span id="etfUtdelning">-</span>
-            </div>
-            <div>
-              <strong>Startdatum:</strong> <span id="etfStartdatum">-</span>
-            </div>
-            <div>
-              <strong>Fondstorlek:</strong> <span id="etfFondstorlek">-</span>
-            </div>
-            <div>
-              <span id="etfIndexInfo"></span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Grafsektion -->
-      <section class="table-section">
-        <div class="container">
-          <div class="table-header">
-            <div>
-              <h2>Prisgraf</h2>
-              <p id="chartInfo" class="table-subtitle">
-                Visar utveckling över tid (SEK om tillgängligt).
-              </p>
-            </div>
-          </div>
-
-          <div class="card">
-            <canvas id="priceChart" height="120"></canvas>
-          </div>
-        </div>
-      </section>
-
-      <!-- Info / beskrivning -->
-      <section class="table-section">
-        <div class="container">
-          <div class="table-header">
-            <h2>Om ETF:en</h2>
-          </div>
-          <div
-            style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;"
-          >
-            <p id="etfDescription">
-              Här kan du senare visa beskrivning, index, replikeringstyp, hemvist
-              och eventuella topp 10-innehav. Lägg till fler kolumner i
-              Supabase-tabellen <code>DATA</code> (t.ex.
-              <code>beskrivning</code>, <code>index_namn</code>) så fylls det i
-              automatiskt.
+    <main class="container" style="margin-top: 24px; margin-bottom: 32px;">
+      <!-- Översta kortet med key info -->
+      <section
+        class="table-section"
+        style="margin-bottom: 24px; display: grid; gap: 16px;"
+      >
+        <div style="display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+          <div>
+            <h2 id="etfName" style="margin-bottom: 4px;">-</h2>
+            <p id="etfTicker" style="margin: 0; color: var(--text-muted);">
+              Ticker: -
+            </p>
+            <p id="etfIssuer" style="margin: 4px 0 0; color: var(--text-muted);">
+              Emitent: -
             </p>
           </div>
+
+          <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">
+                Senaste kurs
+              </div>
+              <div
+                id="etfLastPrice"
+                style="font-size: 1.1rem; font-variant-numeric: tabular-nums;"
+              >
+                -
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">
+                1 år
+              </div>
+              <div
+                id="etf1yReturn"
+                style="font-size: 1.1rem; font-variant-numeric: tabular-nums;"
+              >
+                -
+                <div>
+  <div style="font-size: 0.75rem; color: var(--text-muted);">
+    1 år (SEK)
+  </div>
+  <div id="etf1yReturnSek" style="font-size: 1.1rem; font-variant-numeric: tabular-nums;">
+    -
+  </div>
+</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">
+                TER
+              </div>
+              <div
+                id="etfTer"
+                style="font-size: 1.1rem; font-variant-numeric: tabular-nums;"
+              >
+                -
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; font-size: 0.85rem; color: var(--text-muted);"
+        >
+          <div>
+            <strong>Region:</strong> <span id="etfRegion">-</span>
+          </div>
+          <div>
+            <strong>Tema:</strong> <span id="etfTema">-</span>
+          </div>
+          <div>
+            <strong>Tillgångsslag:</strong> <span id="etfTillgang">-</span>
+          </div>
+          <div>
+            <strong>Valuta:</strong> <span id="etfValuta">-</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Grafsektion (TradingView eller placeholder) -->
+<section class="table-section" style="margin-bottom: 24px;">
+  <div class="table-header">
+    <h2>Graf</h2>
+    <span id="chartInfo" class="count-badge">Pris i SEK (2 år)</span>
+  </div>
+  <div style="margin-top: 8px; min-height: 320px;">
+    <!-- Här ritar Chart.js vår graf -->
+    <canvas id="priceChart" height="120"></canvas>
+  </div>
+</section>
+
+
+      <!-- Info / “innehav” / kostnader – textbaserat tills vi bygger mer -->
+      <section class="table-section">
+        <div class="table-header">
+          <h2>Om ETF:en</h2>
+        </div>
+        <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">
+          <p id="etfDescription">
+            Här kan du senare visa beskrivning, index, replikeringstyp, hemvist och
+            eventuella topp 10-innehav. Lägg till fler kolumner i Supabase-tabellen
+            <code>DATA</code> (t.ex. <code>beskrivning</code>, <code>index_namn</code>,
+            <code>hemvist</code>) och så kan vi enkelt koppla in dem här.
+          </p>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="container">
-        <p>
-          Byggd som ETF-verktyg för egen användning – senare för fler svenska
-          sparare.
-        </p>
+        <p>Byggd som ETF-verktyg för egen användning – senare för fler svenska sparare.</p>
       </div>
     </footer>
 
