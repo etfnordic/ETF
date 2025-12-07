@@ -233,20 +233,22 @@ tr.clickable-row:hover {
 }
 
 .reset-btn {
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: #2a2f45;
-  color: #fff;
-  border: 1px solid #3b4261;
+  padding: 4px 12px;
+  border-radius: 999px;        /* gör den oval, chip-stil */
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   cursor: pointer;
-  transition: 0.15s ease;
-  font-size: 0.8rem;
-  height: 32px;
+  transition: 0.2s ease;
+  font-size: 0.78rem;
   white-space: nowrap;
+  height: 32px;
+  backdrop-filter: blur(4px);  /* modern glas-effekt */
 }
 
 .reset-btn:hover {
-  background: #3a4060;
-  border-color: #4a5278;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
 }
 
