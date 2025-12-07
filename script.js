@@ -138,7 +138,7 @@ function renderaTabell(rader) {
       <td class="numeric avk-1år">${avkText}</td>
     `;
 
-    // färga 1-års-avkastning grön/röd
+    // färga 1-års-avkastning
     if (Number.isFinite(avkNum)) {
       const avkCell = tr.querySelector(".avk-1år");
       if (avkNum < 0) {
@@ -147,6 +147,13 @@ function renderaTabell(rader) {
         avkCell.style.color = "#4ade80"; // grön
       }
     }
+
+    // 🔹 GÖR RADEN KLICKBAR
+    tr.dataset.id = rad.id; // uuid från Supabase
+    tr.classList.add("clickable-row");
+    tr.addEventListener("click", () => {
+      window.location.href = `etf.html?id=${encodeURIComponent(rad.id)}`;
+    });
 
     tbody.appendChild(tr);
   });
@@ -159,6 +166,7 @@ function renderaTabell(rader) {
     statusMessage.textContent = "";
   }
 }
+
 
 // === 5. Event listeners ===
 searchInput.addEventListener("input", appliceraFilterOchRender);
