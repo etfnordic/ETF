@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ETF-detaljer</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div>
+          <h1 id="etfTitle">ETF-detaljer</h1>
+          <p id="etfSubtitle">Laddar ETF...</p>
+        </div>
+        <button
+          onclick="window.location.href='index.html'"
+          class="badge"
+          style="border-radius: 999px; cursor: pointer;"
+        >
+          ← Tillbaka
+        </button>
+      </div>
+    </header>
+
+    <main class="container" style="margin-top: 24px; margin-bottom: 32px;">
+      <!-- Översta kortet med key info -->
+      <section
+        class="table-section"
+        style="margin-bottom: 24px; display: grid; gap: 16px;"
+      >
+        <div style="display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+          <div>
+            <h2 id="etfName" style="margin-bottom: 4px;">-</h2>
+            <p id="etfTicker" style="margin: 0; color: var(--text-muted);">
+              Ticker: -
+            </p>
+            <p id="etfIssuer" style="margin: 4px 0 0; color: var(--text-muted);">
+              Emitent: -
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">
+                Senaste kurs
+              </div>
+              <div
+                id="etfLastPrice"
+                style="font-size: 1.1rem; font-variant-numeric: tabular-nums;"
+              >
+                -
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">
+                1 år
+              </div>
+              <div
+                id="etf1yReturn"
+                style="font-size: 1.1rem; font-variant-numeric: tabular-nums;"
+              >
+                -
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">
+                TER
+              </div>
+              <div
+                id="etfTer"
+                style="font-size: 1.1rem; font-variant-numeric: tabular-nums;"
+              >
+                -
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; font-size: 0.85rem; color: var(--text-muted);"
+        >
+          <div>
+            <strong>Region:</strong> <span id="etfRegion">-</span>
+          </div>
+          <div>
+            <strong>Tema:</strong> <span id="etfTema">-</span>
+          </div>
+          <div>
+            <strong>Tillgångsslag:</strong> <span id="etfTillgang">-</span>
+          </div>
+          <div>
+            <strong>Valuta:</strong> <span id="etfValuta">-</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Grafsektion (TradingView eller placeholder) -->
+      <section class="table-section" style="margin-bottom: 24px;">
+        <div class="table-header">
+          <h2>Graf</h2>
+          <span id="chartInfo" class="count-badge">Baseras på symbol i databasen</span>
+        </div>
+        <div id="chartContainer" style="margin-top: 8px; min-height: 320px;">
+          <p id="chartPlaceholder" style="color: var(--text-muted); font-size: 0.9rem;">
+            Ingen graf är kopplad ännu. Lägg till en kolumn <code>tv_symbol</code> i
+            databasen och fyll i t.ex. <code>LSE:VUSA</code> för att visa TradingView-widget här.
+          </p>
+        </div>
+      </section>
+
+      <!-- Info / “innehav” / kostnader – textbaserat tills vi bygger mer -->
+      <section class="table-section">
+        <div class="table-header">
+          <h2>Om ETF:en</h2>
+        </div>
+        <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">
+          <p id="etfDescription">
+            Här kan du senare visa beskrivning, index, replikeringstyp, hemvist och
+            eventuella topp 10-innehav. Lägg till fler kolumner i Supabase-tabellen
+            <code>DATA</code> (t.ex. <code>beskrivning</code>, <code>index_namn</code>,
+            <code>hemvist</code>) och så kan vi enkelt koppla in dem här.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>Byggd som ETF-verktyg för egen användning – senare för fler svenska sparare.</p>
+      </div>
+    </footer>
+
+    <script src="etf.js"></script>
+  </body>
+</html>
