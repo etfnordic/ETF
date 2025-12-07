@@ -125,6 +125,9 @@ function renderaTabell(rader) {
     const kursText = formatNumber(rad.senaste_kurs, 2);
     const avkNum = Number(rad.avkastning_1år);
     const avkText = Number.isFinite(avkNum) ? avkNum.toFixed(1) + " %" : "";
+    const avkSekNum = Number(rad.avkastning_1år_sek);
+    const avkSekText = Number.isFinite(avkSekNum) ? avkSekNum.toFixed(1) + " %" : "";
+
 
     tr.innerHTML = `
       <td>${rad.namn}</td>
