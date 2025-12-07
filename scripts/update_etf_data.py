@@ -3,159 +3,120 @@ import math
 import requests
 import pandas as pd
 import yfinance as yf
+from datetime import datetime, timedelta
 
-SUPABASE_URL = os.environ["SUPABASE_URL"]  # ex: https://xxxx.supabase.co
+SUPABASE_URL = os.environ["SUPABASE_URL"]
 SUPABASE_SERVICE_ROLE_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
-TABLE = "DATA"
 
-REST_URL = f"{SUPABASE_URL}/rest/v1/{TABLE}"
+DATA_TABLE = "DATA"
+HIST_TABLE = "HISTORIK"
+
+DATA_URL = f"{SUPABASE_URL}/rest/v1/{DATA_TABLE}"
+HIST_URL = f"{SUPABASE_URL}/rest/v1/{HIST_TABLE}"
 
 HEADERS = {
     "apikey": SUPABASE_SERVICE_ROLE_KEY,
     "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
     "Content-Type": "application/json",
-    "Prefer": "return=minimal",
 }
 
 
-def get_rows():
-    resp = requests.get(REST_URL, headers=HEADERS)
-    resp.raise_for_status()
-    return resp.json()
+def get_etfer():
+    r = requests.get(DATA_URL, headers=HEADERS)
+    r.raise_for_status()
+    return r.json()
 
 
 _fx_cache: dict[str, float] = {}
 
 
 def get_fx_to_sek(currency: str) -> float | None:
-    """
-    Hämta valutakurs currency -> SEK via yfinance, t.ex. USDSEK=X.
-    Cache:ar resultat per körning.
-    """
     if not currency or currency.upper() == "SEK":
         return 1.0
-
     cur = currency.upper()
     if cur in _fx_cache:
         return _fx_cache[cur]
-
     symbol = f"{cur}SEK=X"
-    ticker = yf.Ticker(symbol)
-    hist = ticker.history(period="1d")
+    t = yf.Ticker(symbol)
+    hist = t.history(period="1d")
     if hist.empty:
-        print(f"[WARN] Ingen FX-data för {symbol}")
+        print(f"[WARN] ingen FX för {symbol}")
         return None
-
     rate = float(hist["Close"].iloc[-1])
     _fx_cache[cur] = rate
     return rate
 
 
-def compute_returns_and_size(yahoo_symbol: str):
+def upsert_history(rows: list[dict]):
     """
-    Hämtar:
-      - senaste pris
-      - 1-års avkastning i lokal valuta
-      - 1-års avkastning i SEK
-      - fondstorlek i SEK (om tillgängligt)
+    Upsert mot HISTORIK via on_conflict på (etf_id, datum).
+    Du måste ha unikt index på de kolumnerna i Supabase.
     """
-    t = yf.Ticker(yahoo_symbol)
-
-    # --- Info / fondstorlek ---
-    info = t.info or {}
-    currency = info.get("currency") or "USD"
-    total_assets = info.get("totalAssets")  # ofta i fondvaluta (USD/EUR etc.)
-
-    fx_rate = get_fx_to_sek(currency)
-    fund_size_sek = None
-    if total_assets and fx_rate:
-        try:
-            fund_size_sek = float(total_assets) * fx_rate
-        except Exception:
-            pass
-
-    # --- Pris-historik ---
-    hist = t.history(period="1y")
-    if hist.empty or hist["Close"].dropna().shape[0] < 2:
-        print(f"[WARN] Ingen prisdata för {yahoo_symbol}")
-        return None, None, fund_size_sek, None
-
-    close = hist["Close"].dropna()
-    last_price = float(close.iloc[-1])
-    first_price = float(close.iloc[0])
-    ret_local = (last_price / first_price - 1.0) * 100.0
-
-    # --- SEK-avkastning ---
-    ret_sek = None
-    if fx_rate is not None:
-        if currency.upper() == "SEK":
-            # samma som lokal
-            ret_sek = ret_local
-        else:
-            fx_symbol = f"{currency.upper()}SEK=X"
-            fx_ticker = yf.Ticker(fx_symbol)
-            fx_hist = fx_ticker.history(start=hist.index[0], end=hist.index[-1] + pd.Timedelta(days=1))
-            if not fx_hist.empty:
-                fx_close = fx_hist["Close"].reindex(hist.index, method="ffill").dropna()
-                # align date range
-                idx = close.index.intersection(fx_close.index)
-                if len(idx) >= 2:
-                    p = close.loc[idx]
-                    f = fx_close.loc[idx]
-                    first_sek = float(p.iloc[0] * f.iloc[0])
-                    last_sek = float(p.iloc[-1] * f.iloc[-1])
-                    ret_sek = (last_sek / first_sek - 1.0) * 100.0
-
-    return last_price, ret_local, fund_size_sek, ret_sek
-
-
-def update_row(row_id, payload: dict):
-    url = f"{REST_URL}?id=eq.{row_id}"
-    resp = requests.patch(url, headers=HEADERS, json=payload)
+    if not rows:
+        return
+    resp = requests.post(
+        f"{HIST_URL}?on_conflict=etf_id,datum",
+        headers={**HEADERS, "Prefer": "resolution=merge-duplicates"},
+        json=rows,
+    )
     try:
         resp.raise_for_status()
-    except Exception as e:
-        print(f"[ERROR] Misslyckades med update för id={row_id}: {resp.text}")
-        raise e
+    except Exception:
+        print("Upsert-fel:", resp.text)
+        raise
 
 
 def main():
-    rows = get_rows()
-    print(f"Hittade {len(rows)} ETF-rader")
+    etfer = get_etfer()
+    print(f"Hittade {len(etfer)} ETF:er")
 
-    for r in rows:
-        etf_id = r.get("id")
-        symbol = r.get("yahoo_symbol")
+    end = datetime.utcnow().date()
+    start = end - timedelta(days=730)  # 2 år bakåt
+
+    for etf in etfer:
+        etf_id = etf.get("id")
+        symbol = etf.get("yahoo_symbol")
         if not etf_id or not symbol:
             continue
 
-        print(f"Bearbetar {symbol} (id={etf_id})...")
+        print(f"Historik för {symbol}...")
 
         try:
-            last_price, ret_local, fund_size_sek, ret_sek = compute_returns_and_size(symbol)
+            t = yf.Ticker(symbol)
+            hist = t.history(start=start, end=end + timedelta(days=1))
         except Exception as e:
-            print(f"[ERROR] Problem med {symbol}: {e}")
+            print(f"[ERROR] {symbol}: {e}")
             continue
 
-        payload = {}
+        if hist.empty:
+            print(f"[WARN] ingen historik för {symbol}")
+            continue
 
-        if last_price is not None and not math.isnan(last_price):
-            payload["senaste_kurs"] = round(last_price, 4)
+        info = t.info or {}
+        currency = info.get("currency") or "USD"
+        fx = get_fx_to_sek(currency)
 
-        if ret_local is not None and not math.isnan(ret_local):
-            payload["avkastning_1år"] = round(ret_local, 2)
+        rows = []
+        for dt, row in hist.iterrows():
+            close = row.get("Close")
+            if close is None or math.isnan(close):
+                continue
+            datum = dt.date().isoformat()
+            pris = float(close)
+            pris_sek = float(close * fx) if fx is not None else None
 
-        if fund_size_sek is not None and not math.isnan(fund_size_sek):
-            payload["fondstorlek_sek"] = round(fund_size_sek, 0)
+            payload = {
+                "etf_id": etf_id,
+                "datum": datum,
+                "pris": pris,
+            }
+            if pris_sek is not None:
+                payload["pris_sek"] = round(pris_sek, 4)
 
-        if ret_sek is not None and not math.isnan(ret_sek):
-            payload["avkastning_1år_sek"] = round(ret_sek, 2)
+            rows.append(payload)
 
-        if payload:
-            update_row(etf_id, payload)
-            print(f"  Uppdaterade: {payload}")
-        else:
-            print("  Inget att uppdatera.")
+        print(f"  upsertar {len(rows)} rader")
+        upsert_history(rows)
 
 
 if __name__ == "__main__":
