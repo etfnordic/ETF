@@ -20,6 +20,8 @@
     </header>
 
     <main class="container">
+      
+      <!-- FILTERSEKTION + Rensa filter-knapp -->
       <section class="filters">
         <div class="filter-group">
           <label for="searchInput">Sök (namn eller ticker)</label>
@@ -62,8 +64,14 @@
             <option value="Derivat">Derivat</option>
           </select>
         </div>
+
+        <!-- Rensa-knapp -->
+        <div class="filter-group" style="align-self: flex-end;">
+          <button id="resetFiltersBtn" class="reset-btn">Rensa filter ✖</button>
+        </div>
       </section>
 
+      <!-- TABELL -->
       <section class="table-section">
         <div class="table-header">
           <h2>ETF:er</h2>
@@ -73,18 +81,18 @@
         <div class="table-wrapper">
           <table>
             <thead>
-  <tr>
-    <th class="sortable" data-sort-key="namn">Namn</th>
-    <th class="sortable" data-sort-key="ticker">Ticker</th>
-    <th class="sortable" data-sort-key="region">Region</th>
-    <th class="sortable" data-sort-key="tema">Tema</th>
-    <th class="sortable" data-sort-key="tillgångsslag">Tillgångsslag</th>
-    <th class="sortable" data-sort-key="valuta">Valuta</th>
-    <th class="sortable" data-sort-key="ter">TER %</th>
-    <th class="sortable" data-sort-key="senaste_kurs">Senaste kurs</th>
-    <th class="sortable" data-sort-key="avkastning_1år">1 år %</th>
-  </tr>
-</thead>
+              <tr>
+                <th class="sortable" data-sort-key="namn">Namn</th>
+                <th class="sortable" data-sort-key="ticker">Ticker</th>
+                <th class="sortable" data-sort-key="region">Region</th>
+                <th class="sortable" data-sort-key="tema">Tema</th>
+                <th class="sortable" data-sort-key="tillgångsslag">Tillgångsslag</th>
+                <th class="sortable" data-sort-key="valuta">Valuta</th>
+                <th class="sortable" data-sort-key="ter">TER %</th>
+                <th class="sortable" data-sort-key="senaste_kurs">Senaste kurs</th>
+                <th class="sortable" data-sort-key="avkastning_1år">1 år %</th>
+              </tr>
+            </thead>
 
             <tbody id="etfTableBody">
               <!-- Fylls via JavaScript -->
@@ -98,7 +106,7 @@
 
     <footer class="site-footer">
       <div class="container">
-        <p>Byggd som ETF-verktyg för egen användning.</p>
+        <p>Byggd som ETF-verktyg för egen användning, ansvarsfriskrivning.</p>
       </div>
     </footer>
 
