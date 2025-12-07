@@ -1,6 +1,7 @@
 // === 1. KONFIGURATION ===
 const SUPABASE_URL = "https://ereoftabfbmwaahcubyb.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyZW9mdGFiZmJtd2FhaGN1YnliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwNjE2NDEsImV4cCI6MjA4MDYzNzY0MX0.H7uFb8r8wDBYiiqVcKUOEJYq0vEmLkXMMUySqnG8MDw";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyZW9mdGFiZmJtd2FhaGN1YnliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwNjE2NDEsImV4cCI6MjA4MDYzNzY0MX0.H7uFb8r8wDBYiiqVcKUOEJYq0vEmLkXMMUySqnG8MDw";
 
 const { createClient } = supabase;
 const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -17,6 +18,12 @@ const searchInput = document.getElementById("searchInput");
 const regionFilter = document.getElementById("regionFilter");
 const temaFilter = document.getElementById("temaFilter");
 const tillgangFilter = document.getElementById("tillgangFilter");
+
+// Hjälpfunktion för säkra tal
+function formatNumber(value, decimals = 2) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num.toFixed(decimals) : "";
+}
 
 // === 2. Hämta ETF:er ===
 async function hamtaEtfer() {
@@ -62,7 +69,8 @@ function appliceraFilterOchRender() {
 
   if (regionVal) filtrerad = filtrerad.filter((r) => r.region === regionVal);
   if (temaVal) filtrerad = filtrerad.filter((r) => r.tema === temaVal);
-  if (tillgangVal) filtrerad = filtrerad.filter((r) => r.tillgångsslag === tillgangVal);
+  if (tillgangVal)
+    filtrerad = filtrerad.filter((r) => r.tillgångsslag === tillgangVal);
 
   renderaTabell(filtrerad);
 }
@@ -74,6 +82,16 @@ function renderaTabell(rader) {
   rader.forEach((rad) => {
     const tr = document.createElement("tr");
 
+    // TER
+    const terText = formatNumber(rad.ter, 2);
+
+    // Senaste kurs
+    const kursText = formatNumber(rad.senaste_kurs, 2);
+
+    // Avkastning 1 år
+    const avkNum = Number(rad.avkastning_1år);
+    const avkText = Number.isFinite(avkNum) ? avkNum.toFixed(1) + " %" : "";
+
     tr.innerHTML = `
       <td>${rad.namn}</td>
       <td>${rad.ticker}</td>
@@ -81,10 +99,20 @@ function renderaTabell(rader) {
       <td>${rad.tema}</td>
       <td>${rad.tillgångsslag}</td>
       <td>${rad.valuta}</td>
-      <td class="numeric">${rad.ter?.toFixed(2) ?? ""}</td>
-      <td class="numeric">${rad.senaste_kurs?.toFixed(2) ?? ""}</td>
-      <td class="numeric">${rad.avkastning_1år ? rad.avkastning_1år + "%" : ""}</td>
+      <td class="numeric">${terText}</td>
+      <td class="numeric">${kursText}</td>
+      <td class="numeric avk-1år">${avkText}</td>
     `;
+
+    // Färgsätt 1-års-avkastning
+    if (Number.isFinite(avkNum)) {
+      const avkCell = tr.querySelector(".avk-1år");
+      if (avkNum < 0) {
+        avkCell.style.color = "#f97373"; // röd
+      } else if (avkNum > 0) {
+        avkCell.style.color = "#4ade80"; // grön
+      }
+    }
 
     tbody.appendChild(tr);
   });
