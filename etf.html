@@ -106,18 +106,17 @@
       </section>
 
       <!-- Grafsektion (TradingView eller placeholder) -->
-      <section class="table-section" style="margin-bottom: 24px;">
-        <div class="table-header">
-          <h2>Graf</h2>
-          <span id="chartInfo" class="count-badge">Baseras på symbol i databasen</span>
-        </div>
-        <div id="chartContainer" style="margin-top: 8px; min-height: 320px;">
-          <p id="chartPlaceholder" style="color: var(--text-muted); font-size: 0.9rem;">
-            Ingen graf är kopplad ännu. Lägg till en kolumn <code>tv_symbol</code> i
-            databasen och fyll i t.ex. <code>LSE:VUSA</code> för att visa TradingView-widget här.
-          </p>
-        </div>
-      </section>
+<section class="table-section" style="margin-bottom: 24px;">
+  <div class="table-header">
+    <h2>Graf</h2>
+    <span id="chartInfo" class="count-badge">Pris i SEK (2 år)</span>
+  </div>
+  <div style="margin-top: 8px; min-height: 320px;">
+    <!-- Här ritar Chart.js vår graf -->
+    <canvas id="priceChart" height="120"></canvas>
+  </div>
+</section>
+
 
       <!-- Info / “innehav” / kostnader – textbaserat tills vi bygger mer -->
       <section class="table-section">
