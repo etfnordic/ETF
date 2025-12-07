@@ -1,15 +1,15 @@
 // === 1. KONFIGURATION ===
 const SUPABASE_URL = "https://ereoftabfbmwaahcubyb.supabase.co";
 const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIs...CI6MjA4MDYzNzY0MX0.H7uFb8r8wDBYiiqVcKUOEJYq0vEmLkXMMUySqnG8MDw";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyZW9mdGFiZmJtd2FhaGN1YnliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwNjE2NDEsImV4cCI6MjA4MDYzNzY0MX0.H7uFb8r8wDBYiiqVcKUOEJYq0vEmLkXMMUySqnG8MDw";
 
 const { createClient } = supabase;
 const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Globala variabler
 let allaEtfer = [];
-let sortKey = null; // t.ex. "namn", "ter"
-let sortDir = "asc"; // "asc" eller "desc"
+let sortKey = null;      // t.ex. "namn", "ter"
+let sortDir = "asc";     // "asc" eller "desc"
 
 // Elementreferenser
 const tbody = document.getElementById("etfTableBody");
@@ -44,7 +44,6 @@ async function hamtaEtfer() {
 
     allaEtfer = data || [];
     statusMessage.textContent = "";
-    byggFilterAlternativ();
     appliceraFilterOchRender();
   } catch (err) {
     console.error(err);
@@ -52,49 +51,10 @@ async function hamtaEtfer() {
   }
 }
 
-// Bygg filteralternativ baserat på data
-function byggFilterAlternativ() {
-  const regioner = new Set();
-  const teman = new Set();
-  const tillgangar = new Set();
-
-  allaEtfer.forEach((rad) => {
-    if (rad.region) regioner.add(rad.region);
-    if (rad.tema) teman.add(rad.tema);
-    if (rad.tillgångsslag) tillgangar.add(rad.tillgångsslag);
-  });
-
-  // Hjälpfunktion för att fylla en select
-  function fyllSelect(selectEl, värden) {
-    // Rensa allt utom första (Alla)
-    while (selectEl.options.length > 1) {
-      selectEl.remove(1);
-    }
-    Array.from(värden)
-      .sort((a, b) => a.localeCompare(b, "sv"))
-      .forEach((v) => {
-        const opt = document.createElement("option");
-        opt.value = v;
-        opt.textContent = v;
-        selectEl.appendChild(opt);
-      });
-  }
-
-  fyllSelect(regionFilter, regioner);
-  fyllSelect(temaFilter, teman);
-  fyllSelect(tillgangFilter, tillgangar);
-}
-
-// === 3. Sortering ===
 function sorteraLista(lista) {
   if (!sortKey) return lista;
 
-  const numericKeys = new Set([
-    "ter",
-    "senaste_kurs",
-    "avkastning_1år",
-    "avkastning_1år_sek",
-  ]);
+  const numericKeys = new Set(["ter", "senaste_kurs", "avkastning_1år"]);
 
   const sorted = [...lista].sort((a, b) => {
     let va = a[sortKey];
@@ -120,7 +80,7 @@ function sorteraLista(lista) {
   return sorted;
 }
 
-// === 4. Filtrering + rendering ===
+// === 3. Filtrering ===
 function appliceraFilterOchRender() {
   const sök = searchInput.value.trim().toLowerCase();
   const regionVal = regionFilter.value;
@@ -132,8 +92,8 @@ function appliceraFilterOchRender() {
   if (sök) {
     filtrerad = filtrerad.filter((rad) => {
       return (
-        (rad.namn || "").toLowerCase().includes(sök) ||
-        (rad.ticker || "").toLowerCase().includes(sök)
+        rad.namn.toLowerCase().includes(sök) ||
+        rad.ticker.toLowerCase().includes(sök)
       );
     });
   }
@@ -143,11 +103,18 @@ function appliceraFilterOchRender() {
   if (tillgangVal)
     filtrerad = filtrerad.filter((r) => r.tillgångsslag === tillgangVal);
 
-  const sorterad = sorteraLista(filtrerad);
-  renderaTabell(sorterad);
+const sorterad = sorteraLista(filtrerad);
+renderaTabell(sorterad);
+
 }
 
-// === 5. Rendera tabell ===
+// Hjälpfunktion för säkra tal
+function formatNumber(value, decimals = 2) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num.toFixed(decimals) : "";
+}
+
+// === 4. Rendera tabell ===
 function renderaTabell(rader) {
   tbody.innerHTML = "";
 
@@ -159,21 +126,19 @@ function renderaTabell(rader) {
     const avkNum = Number(rad.avkastning_1år);
     const avkText = Number.isFinite(avkNum) ? avkNum.toFixed(1) + " %" : "";
     const avkSekNum = Number(rad.avkastning_1år_sek);
-    const avkSekText = Number.isFinite(avkSekNum)
-      ? avkSekNum.toFixed(1) + " %"
-      : "";
+    const avkSekText = Number.isFinite(avkSekNum) ? avkSekNum.toFixed(1) + " %" : "";
+
 
     tr.innerHTML = `
       <td>${rad.namn}</td>
-      <td>${rad.ticker || ""}</td>
-      <td>${rad.region || ""}</td>
-      <td>${rad.tema || ""}</td>
-      <td>${rad.tillgångsslag || ""}</td>
-      <td>${rad.valuta || ""}</td>
+      <td>${rad.ticker}</td>
+      <td>${rad.region}</td>
+      <td>${rad.tema}</td>
+      <td>${rad.tillgångsslag}</td>
+      <td>${rad.valuta}</td>
       <td class="numeric">${terText}</td>
       <td class="numeric">${kursText}</td>
       <td class="numeric avk-1år">${avkText}</td>
-      <td class="numeric avk-1år-sek">${avkSekText}</td>
     `;
 
     // färga 1-års-avkastning
@@ -186,17 +151,7 @@ function renderaTabell(rader) {
       }
     }
 
-    // färga 1-års-avkastning i SEK
-    if (Number.isFinite(avkSekNum)) {
-      const avkSekCell = tr.querySelector(".avk-1år-sek");
-      if (avkSekNum < 0) {
-        avkSekCell.style.color = "#f97373"; // röd
-      } else if (avkSekNum > 0) {
-        avkSekCell.style.color = "#4ade80"; // grön
-      }
-    }
-
-    // Gör raden klickbar → detaljsida
+    // 🔹 GÖR RADEN KLICKBAR
     tr.dataset.id = rad.id; // uuid från Supabase
     tr.classList.add("clickable-row");
     tr.addEventListener("click", () => {
@@ -215,7 +170,35 @@ function renderaTabell(rader) {
   }
 }
 
-// === 6. Sortering på kolumnhuvud ===
+
+// === 5. Event listeners ===
+searchInput.addEventListener("input", appliceraFilterOchRender);
+regionFilter.addEventListener("change", appliceraFilterOchRender);
+temaFilter.addEventListener("change", appliceraFilterOchRender);
+tillgangFilter.addEventListener("change", appliceraFilterOchRender);
+
+// 🔹 Rensa filter-knapp
+const resetBtn = document.getElementById("resetFiltersBtn");
+if (resetBtn) {
+  resetBtn.addEventListener("click", () => {
+    // nollställ fält
+    searchInput.value = "";
+    regionFilter.selectedIndex = 0;   // första alternativet = "Alla"
+    temaFilter.selectedIndex = 0;
+    tillgangFilter.selectedIndex = 0;
+
+    // nollställ sortering
+    sortKey = null;
+    sortDir = "asc";
+    document
+      .querySelectorAll("thead th[data-sort-key]")
+      .forEach((h) => h.classList.remove("sorted-asc", "sorted-desc"));
+
+    // rendera om
+    appliceraFilterOchRender();
+  });
+}
+
 function initSorting() {
   const headerCells = document.querySelectorAll("thead th[data-sort-key]");
 
@@ -228,10 +211,12 @@ function initSorting() {
         // samma kolumn → toggla riktning
         sortDir = sortDir === "asc" ? "desc" : "asc";
       } else {
+        // ny kolumn → börja med asc
         sortKey = key;
         sortDir = "asc";
       }
 
+      // rensa gamla pilar
       headerCells.forEach((h) =>
         h.classList.remove("sorted-asc", "sorted-desc")
       );
@@ -244,31 +229,8 @@ function initSorting() {
   });
 }
 
-// === 7. Event listeners ===
-searchInput.addEventListener("input", appliceraFilterOchRender);
-regionFilter.addEventListener("change", appliceraFilterOchRender);
-temaFilter.addEventListener("change", appliceraFilterOchRender);
-tillgangFilter.addEventListener("change", appliceraFilterOchRender);
-
-// Rensa filter-knapp
-const resetBtn = document.getElementById("resetFiltersBtn");
-if (resetBtn) {
-  resetBtn.addEventListener("click", () => {
-    searchInput.value = "";
-    regionFilter.selectedIndex = 0;
-    temaFilter.selectedIndex = 0;
-    tillgangFilter.selectedIndex = 0;
-
-    sortKey = null;
-    sortDir = "asc";
-    document
-      .querySelectorAll("thead th[data-sort-key]")
-      .forEach((h) => h.classList.remove("sorted-asc", "sorted-desc"));
-
-    appliceraFilterOchRender();
-  });
-}
-
-// === 8. Start ===
+// initiera sortering
 initSorting();
+
+// === 6. Start ===
 hamtaEtfer();
