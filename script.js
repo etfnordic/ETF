@@ -75,6 +75,12 @@ function appliceraFilterOchRender() {
   renderaTabell(filtrerad);
 }
 
+// Hjälpfunktion för säkra tal
+function formatNumber(value, decimals = 2) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num.toFixed(decimals) : "";
+}
+
 // === 4. Rendera tabell ===
 function renderaTabell(rader) {
   tbody.innerHTML = "";
@@ -82,13 +88,8 @@ function renderaTabell(rader) {
   rader.forEach((rad) => {
     const tr = document.createElement("tr");
 
-    // TER
     const terText = formatNumber(rad.ter, 2);
-
-    // Senaste kurs
     const kursText = formatNumber(rad.senaste_kurs, 2);
-
-    // Avkastning 1 år
     const avkNum = Number(rad.avkastning_1år);
     const avkText = Number.isFinite(avkNum) ? avkNum.toFixed(1) + " %" : "";
 
@@ -104,7 +105,7 @@ function renderaTabell(rader) {
       <td class="numeric avk-1år">${avkText}</td>
     `;
 
-    // Färgsätt 1-års-avkastning
+    // färga 1-års-avkastning grön/röd
     if (Number.isFinite(avkNum)) {
       const avkCell = tr.querySelector(".avk-1år");
       if (avkNum < 0) {
