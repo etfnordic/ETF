@@ -8,6 +8,8 @@ const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Globala variabler
 let allaEtfer = [];
+let sortKey = null;      // t.ex. "namn", "ter"
+let sortDir = "asc";     // "asc" eller "desc"
 
 // Elementreferenser
 const tbody = document.getElementById("etfTableBody");
@@ -49,6 +51,35 @@ async function hamtaEtfer() {
   }
 }
 
+function sorteraLista(lista) {
+  if (!sortKey) return lista;
+
+  const numericKeys = new Set(["ter", "senaste_kurs", "avkastning_1år"]);
+
+  const sorted = [...lista].sort((a, b) => {
+    let va = a[sortKey];
+    let vb = b[sortKey];
+
+    if (numericKeys.has(sortKey)) {
+      va = Number(va);
+      vb = Number(vb);
+
+      if (!Number.isFinite(va) && !Number.isFinite(vb)) return 0;
+      if (!Number.isFinite(va)) return 1;
+      if (!Number.isFinite(vb)) return -1;
+    } else {
+      va = (va ?? "").toString().toLowerCase();
+      vb = (vb ?? "").toString().toLowerCase();
+    }
+
+    if (va < vb) return sortDir === "asc" ? -1 : 1;
+    if (va > vb) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  return sorted;
+}
+
 // === 3. Filtrering ===
 function appliceraFilterOchRender() {
   const sök = searchInput.value.trim().toLowerCase();
@@ -72,7 +103,9 @@ function appliceraFilterOchRender() {
   if (tillgangVal)
     filtrerad = filtrerad.filter((r) => r.tillgångsslag === tillgangVal);
 
-  renderaTabell(filtrerad);
+const sorterad = sorteraLista(filtrerad);
+renderaTabell(sorterad);
+
 }
 
 // Hjälpfunktion för säkra tal
@@ -133,5 +166,39 @@ regionFilter.addEventListener("change", appliceraFilterOchRender);
 temaFilter.addEventListener("change", appliceraFilterOchRender);
 tillgangFilter.addEventListener("change", appliceraFilterOchRender);
 
+function initSorting() {
+  const headerCells = document.querySelectorAll("thead th[data-sort-key]");
+
+  headerCells.forEach((th) => {
+    const key = th.dataset.sortKey;
+    if (!key) return;
+
+    th.addEventListener("click", () => {
+      if (sortKey === key) {
+        // samma kolumn → toggla riktning
+        sortDir = sortDir === "asc" ? "desc" : "asc";
+      } else {
+        // ny kolumn → börja med asc
+        sortKey = key;
+        sortDir = "asc";
+      }
+
+      // rensa gamla pilar
+      headerCells.forEach((h) =>
+        h.classList.remove("sorted-asc", "sorted-desc")
+      );
+      th.classList.add(
+        sortDir === "asc" ? "sorted-asc" : "sorted-desc"
+      );
+
+      appliceraFilterOchRender();
+    });
+  });
+}
+
+// initiera sortering
+initSorting();
+
 // === 6. Start ===
 hamtaEtfer();
+
