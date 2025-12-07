@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ETF-jämförelse</title>
+    <title>ETF</title>
     <link rel="stylesheet" href="style.css" />
     <!-- Supabase via CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,7 +13,7 @@
       <div class="container header-inner">
         <div>
           <h1>ETF-jämförelse</h1>
-          <p>Jämför ETF:er som finns i din databas – direkt från Supabase.</p>
+          <p>Jämför ETF:er</p>
         </div>
         <div class="badge">Beta</div>
       </div>
@@ -73,18 +73,19 @@
         <div class="table-wrapper">
           <table>
             <thead>
-              <tr>
-                <th>Namn</th>
-                <th>Ticker</th>
-                <th>Region</th>
-                <th>Tema</th>
-                <th>Tillgångsslag</th>
-                <th>Valuta</th>
-                <th>TER %</th>
-                <th>Senaste kurs</th>
-                <th>1 år %</th>
-              </tr>
-            </thead>
+  <tr>
+    <th class="sortable" data-sort-key="namn">Namn</th>
+    <th class="sortable" data-sort-key="ticker">Ticker</th>
+    <th class="sortable" data-sort-key="region">Region</th>
+    <th class="sortable" data-sort-key="tema">Tema</th>
+    <th class="sortable" data-sort-key="tillgångsslag">Tillgångsslag</th>
+    <th class="sortable" data-sort-key="valuta">Valuta</th>
+    <th class="sortable" data-sort-key="ter">TER %</th>
+    <th class="sortable" data-sort-key="senaste_kurs">Senaste kurs</th>
+    <th class="sortable" data-sort-key="avkastning_1år">1 år %</th>
+  </tr>
+</thead>
+
             <tbody id="etfTableBody">
               <!-- Fylls via JavaScript -->
             </tbody>
