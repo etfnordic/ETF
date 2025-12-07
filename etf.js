@@ -79,6 +79,16 @@ async function loadEtf() {
         else if (ret1 > 0) retEl.style.color = "#4ade80";
       }
     }
+const retSek = Number(etf.avkastning_1år_sek);
+const retSekText = Number.isFinite(retSek) ? retSek.toFixed(1) + " %" : "-";
+const retSekEl = document.getElementById("etf1yReturnSek");
+if (retSekEl) {
+  retSekEl.textContent = retSekText;
+  if (Number.isFinite(retSek)) {
+    if (retSek < 0) retSekEl.style.color = "#f97373";
+    else if (retSek > 0) retSekEl.style.color = "#4ade80";
+  }
+}
 
     // Beskrivning – om du senare lägger till kolumn 'beskrivning'
     if (etf.beskrivning) {
