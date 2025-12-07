@@ -174,15 +174,27 @@ regionFilter.addEventListener("change", appliceraFilterOchRender);
 temaFilter.addEventListener("change", appliceraFilterOchRender);
 tillgangFilter.addEventListener("change", appliceraFilterOchRender);
 
-// Rensa filter-knapp
-document.getElementById("resetFiltersBtn").addEventListener("click", () => {
-  searchInput.value = "";
-  regionFilter.value = "";
-  temaFilter.value = "";
-  tillgangFilter.value = "";
+// 🔹 Rensa filter-knapp
+const resetBtn = document.getElementById("resetFiltersBtn");
+if (resetBtn) {
+  resetBtn.addEventListener("click", () => {
+    // nollställ fält
+    searchInput.value = "";
+    regionFilter.selectedIndex = 0;   // första alternativet = "Alla"
+    temaFilter.selectedIndex = 0;
+    tillgangFilter.selectedIndex = 0;
 
-  appliceraFilterOchRender();
-});
+    // nollställ sortering
+    sortKey = null;
+    sortDir = "asc";
+    document
+      .querySelectorAll("thead th[data-sort-key]")
+      .forEach((h) => h.classList.remove("sorted-asc", "sorted-desc"));
+
+    // rendera om
+    appliceraFilterOchRender();
+  });
+}
 
 function initSorting() {
   const headerCells = document.querySelectorAll("thead th[data-sort-key]");
