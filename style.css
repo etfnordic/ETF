@@ -233,15 +233,16 @@ tr.clickable-row:hover {
 }
 
 .reset-btn {
-  padding: 8px 14px;
+  padding: 6px 10px;
   border-radius: 8px;
   background: #2a2f45;
   color: #fff;
   border: 1px solid #3b4261;
   cursor: pointer;
   transition: 0.15s ease;
-  font-size: 0.9rem;
-  height: 42px;
+  font-size: 0.8rem;
+  height: 32px;
+  white-space: nowrap;
 }
 
 .reset-btn:hover {
