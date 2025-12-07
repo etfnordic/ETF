@@ -15,87 +15,93 @@
           <h1>ETFnordic</h1>
           <p>Jämför ETF:er</p>
         </div>
+        <div class="badge">Beta</div>
       </div>
     </header>
 
-    <main class="site-main">
-      <section class="table-section">
-        <div class="container">
-          <div class="table-header">
-            <div>
-              <h2>Alla ETF:er</h2>
-              <p class="table-subtitle">
-                Filtrera, sortera och klicka på en rad för att se detaljer.
-              </p>
-            </div>
-            <div class="table-header-meta">
-              <span id="countBadge" class="badge">0 st</span>
-              <button id="resetFiltersBtn" class="badge badge-ghost" type="button">
-                Rensa filter
-              </button>
-            </div>
-          </div>
-
-          <!-- Filterrad -->
-          <div class="filters-row">
-            <div class="filter-group">
-              <label for="searchInput">Sök</label>
-              <input
-                id="searchInput"
-                type="search"
-                placeholder="Ex. XACT, World, EM..."
-              />
-            </div>
-
-            <div class="filter-group">
-              <label for="regionFilter">Region</label>
-              <select id="regionFilter">
-                <option value="">Alla</option>
-                <!-- Fylls på dynamiskt vid behov -->
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label for="temaFilter">Tema</label>
-              <select id="temaFilter">
-                <option value="">Alla</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label for="tillgangFilter">Tillgångsslag</label>
-              <select id="tillgangFilter">
-                <option value="">Alla</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Tabell -->
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th class="sortable" data-sort-key="namn">Namn</th>
-                  <th class="sortable" data-sort-key="ticker">Ticker</th>
-                  <th class="sortable" data-sort-key="region">Region</th>
-                  <th class="sortable" data-sort-key="tema">Tema</th>
-                  <th class="sortable" data-sort-key="tillgångsslag">Tillgång</th>
-                  <th class="sortable" data-sort-key="valuta">Valuta</th>
-                  <th class="sortable" data-sort-key="ter">Avgift %</th>
-                  <th class="sortable" data-sort-key="senaste_kurs">Senaste kurs</th>
-                  <th class="sortable" data-sort-key="avkastning_1år">1 år %</th>
-                  <th class="sortable" data-sort-key="avkastning_1år_sek">1 år % (SEK)</th>
-                </tr>
-              </thead>
-
-              <tbody id="etfTableBody">
-                <!-- Fylls via JavaScript -->
-              </tbody>
-            </table>
-          </div>
-
-          <div id="statusMessage" class="status-message"></div>
+    <main class="container">
+      
+      <!-- FILTERSEKTION + Rensa filter-knapp -->
+      <section class="filters">
+        <div class="filter-group">
+          <label for="searchInput">Sök (namn eller ticker)</label>
+          <input id="searchInput" type="text" placeholder="Ex. XACT, World, EM..." />
         </div>
+
+        <div class="filter-group">
+          <label for="regionFilter">Region</label>
+          <select id="regionFilter">
+            <option value="">Alla</option>
+            <option value="Sverige">Sverige</option>
+            <option value="Norden">Norden</option>
+            <option value="Global">Global</option>
+            <option value="USA">USA</option>
+            <option value="EM">EM</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="temaFilter">Tema</label>
+          <select id="temaFilter">
+            <option value="">Alla</option>
+            <option value="Breda aktier">Breda aktier</option>
+            <option value="Räntor">Räntor</option>
+            <option value="Utdelning">Utdelning</option>
+            <option value="Globalt Index">Globalt Index</option>
+            <option value="Emerging Markets">Emerging Markets</option>
+            <option value="USA Index">USA Index</option>
+            <option value="Hävstång">Hävstång</option>
+            <option value="Inverse">Inverse</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="tillgangFilter">Tillgång</label>
+          <select id="tillgangFilter">
+            <option value="">Alla</option>
+            <option value="Aktier">Aktier</option>
+            <option value="Räntor">Räntor</option>
+            <option value="Derivat">Derivat</option>
+          </select>
+        </div>
+
+        <!-- Rensa-knapp -->
+        <div class="filter-group" style="align-self: flex-end;">
+          <button id="resetFiltersBtn" class="reset-btn">Rensa ✖</button>
+        </div>
+      </section>
+
+      <!-- TABELL -->
+      <section class="table-section">
+        <div class="table-header">
+          <h2>ETF:er</h2>
+          <span id="countBadge" class="count-badge">0 st</span>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th class="sortable" data-sort-key="namn">Namn</th>
+                <th class="sortable" data-sort-key="ticker">Ticker</th>
+                <th class="sortable" data-sort-key="region">Region</th>
+                <th class="sortable" data-sort-key="tema">Tema</th>
+                <th class="sortable" data-sort-key="tillgångsslag">Tillgång</th>
+                <th class="sortable" data-sort-key="valuta">Valuta</th>
+                <th class="sortable" data-sort-key="ter">Avgift %</th>
+                <th class="sortable" data-sort-key="senaste_kurs">Senaste kurs</th>
+                <th class="sortable" data-sort-key="avkastning_1år">1 år %</th>
+                <th class="sortable" data-sort-key="avkastning_1år">1 år % (SEK)</th>
+              </tr>
+            </thead>
+
+            <tbody id="etfTableBody">
+              <!-- Fylls via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
       </section>
     </main>
 
